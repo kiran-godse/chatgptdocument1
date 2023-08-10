@@ -1,7 +1,6 @@
-import fetch from 'node-fetch';
-import { Octokit } from '@octokit/rest';
 const fetch = require('node-fetch');
 const { Octokit } = require('@octokit/rest');
+
 
 const octokit = new Octokit({
   auth: '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', // Replace with your GitHub personal access token
