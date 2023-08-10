@@ -1,9 +1,13 @@
-name: Chat with GPT-3.5
+name: Process Discussions
 
-on: [push]
+on:
+  discussion:
+    types: [created, edited]
+  discussion_comment:
+    types: [created, edited]
 
 jobs:
-  interact_with_chatbot:
+  process_discussion:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,5 +22,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run chat script
-        run: node chatgpt.js
+      - name: Run chat script and post response
+        id: chatbot
+        env:
+          DISCUSSION_CONTENT: ${{ github.event.comment.body }}
+        run: |
+          RESPONSE=$(node chatbot.js "$DISCUSSION_CONTENT")
+          echo "Chatbot Response: $RESPONSE"
+      
