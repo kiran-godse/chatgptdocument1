@@ -1,0 +1,22 @@
+name: Chat with GPT-3.5
+
+on: [push]
+
+jobs:
+  interact_with_chatbot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run chat script
+        run: node chatgpt.js
