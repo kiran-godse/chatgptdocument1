@@ -1,3 +1,5 @@
+import fetch from 'node-fetch';
+import { Octokit } from '@octokit/rest';
 const fetch = require('node-fetch');
 const { Octokit } = require('@octokit/rest');
 
