@@ -26,7 +26,8 @@ jobs:
         id: chatbot
         env:
           DISCUSSION_CONTENT: ${{ github.event.comment.body }}
+          NODE_OPTIONS: "--loader ts-node/esm"
         run: |
           RESPONSE=$(node chatbot.js "$DISCUSSION_CONTENT")
           echo "Chatbot Response: $RESPONSE"
-      
+          # Use GitHub's API or other methods to post the response as a comment
