@@ -35,8 +35,8 @@ jobs:
         with:
           title: ${{ steps.prompt.outputs.title }}
           body: ${{ steps.chatgpt.outputs.body }}
-          repository-id: R_kgDOJyJSug
-          category-id: DIC_kwDOJyJSus4CYqMW
+          repository-id: "R_kgDOKFks3w"
+          category-id: DIC_kwDOKFks384CYgtw
       - name: Print discussion url and id
         run: |
           echo discussion-id: ${{steps.create-discussion.outputs.discussion-id}} 
