@@ -1,37 +1,43 @@
-name: ChatGPT Discussion Workflow
+name: Trigger Workflow on Discussion
+
 on:
   discussion:
     types:
       - created
 
 jobs:
-  generate_response:
+  triage:
+    if: >-
+      github.event.discussion.category.name == 'General'
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-
-      - name: Install Dependencies
-        run: npm install -g jq
-
-      - name: Invoke ChatGPT API
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      - name: workflow steps
+        id: prompt
         run: |
-          DISCUSSION_BODY=$(jq -r '.comment.body' $GITHUB_EVENT_PATH)
-          RESPONSE=$(curl -X POST "https://api.openai.com/v1/chat/completions" \
-                     -H "Content-Type: application/json" \
-                     -H "Authorization: Bearer $OPENAI_API_KEY" \
-                     -d '{
-                           "messages": [
-                             {"role": "system", "content": "You are a user."},
-                             {"role": "user", "content": "'"${DISCUSSION_BODY}"'"}
-                           ]
-                         }')
+          echo "body=$(echo '${{ toJson(github.event) }}' | jq '.discussion.body')" >> $GITHUB_OUTPUT
+          echo "title=$(echo '${{ toJson(github.event) }}' | jq '.discussion.title')" >> $GITHUB_OUTPUT
 
-          echo $RESPONSE > response.json
+      - name: chatgpt
+        id: chatgpt
+        uses: kiran-godse/chatdocument@main
+        with:
+          api_key: ${{ secrets.API_KEY }}
+          prompt: ${{ steps.prompt.outputs.body }}
+
+      - name: Create a new GitHub Discussion
+        id: create-discussion
+        uses: abirismyname/create-discussion@v1.1.0
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          title: ${{ steps.prompt.outputs.title }}
+          body: ${{ steps.chatgpt.outputs.body }}
+          repository-id: R_kgDOJyJSug
+          category-id: DIC_kwDOJyJSus4CYqMW
+      - name: Print discussion url and id
+        run: |
+          echo discussion-id: ${{steps.create-discussion.outputs.discussion-id}} 
+          echo discussion-url: ${{steps.create-discussion.outputs.discussion-url}}

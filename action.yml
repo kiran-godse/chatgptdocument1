@@ -1,0 +1,15 @@
+name: OpenAI Conversation
+
+description: Run OpenAI conversation script
+
+inputs:
+  api_key:
+    description: "OpenAI API Key"
+    required: true
+  prompt:
+    description: "Prompt for Conversation"
+    required: true
+
+runs:
+  using: "node12"
+  main: "index.js"
