@@ -22,7 +22,8 @@ jobs:
 
       - name: chatgpt
         id: chatgpt
-        uses: kiran-godse/chatdocument1@main
+        uses: ./.github/actions/chatdocument1
+
         with:
           api_key: ${{ secrets.API_KEY }}
           prompt: ${{ steps.prompt.outputs.body }}
