@@ -2,7 +2,7 @@
 //const fetch = require('node-fetch');
 import fetch from "node-fetch";
 //const fetch = fetch(import.meta.url);
-const core = require("@actions/core");
+import * as core from "@actions/core";
 global.require = fetch; //this will make require at the global scobe and treat it like the original require
 
 // const apiKey = core.getInput("openai-api-key");
