@@ -6,8 +6,8 @@ import * as core from "@actions/core";
 global.require = fetch; //this will make require at the global scobe and treat it like the original require
 
 // const apiKey = core.getInput("openai-api-key");
+const API_KEY = core.getInput("api_key");
 const prompt = core.getInput("prompt");
-const API_KEY = core.getinput("api_key");
 const API_URL = "https://api.openai.com/v1/chat/completions";
 // const API_KEY = "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";
 
