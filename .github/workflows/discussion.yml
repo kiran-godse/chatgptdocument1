@@ -21,7 +21,7 @@ jobs:
           echo "title=$(echo '${{ toJson(github.event) }}' | jq '.discussion.title')" >> $GITHUB_OUTPUT
       - name: Use local action
         id: chatgpt
-        uses: ./actions/discussion-workflow
+        uses: ./actions/discussion-workflow/index.js
         with:
           api_key: ${{ secrets.API_KEY }}
           prompt: ${{ steps.prompt.outputs.body }}
