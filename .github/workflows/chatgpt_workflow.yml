@@ -20,7 +20,7 @@ jobs:
           echo "body=$(echo '${{ toJson(github.event) }}' | jq '.discussion.body')" >> $GITHUB_OUTPUT
           echo "title=$(echo '${{ toJson(github.event) }}' | jq '.discussion.title')" >> $GITHUB_OUTPUT
 
-      - name: chatgpt
+      - name: Use local action
         id: chatgpt
         uses: ./.github/actions/chatdocument1
 
