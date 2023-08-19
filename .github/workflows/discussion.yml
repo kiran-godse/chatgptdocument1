@@ -36,6 +36,11 @@ jobs:
           body: ${{ steps.chatgpt.outputs.body }}
           repository-id: "R_kgDOKFks3w"
           category-id: DIC_kwDOKFks384CYgtw
+      - name: Debug Output
+        run: |
+         echo "repository-id: ${{ inputs.repository-id }}"
+         echo "category-id: ${{ inputs.category-id }}"
+
       - name: Print discussion url and id
         run: |
           echo discussion-id: ${{steps.create-discussion.outputs.discussion-id}} 
