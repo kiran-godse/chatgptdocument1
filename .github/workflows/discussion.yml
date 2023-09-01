@@ -17,21 +17,8 @@ jobs:
       - name: workflow steps
         id: prompt
         run: |
-          # Fetch the ChatGPT response and store it in a variable
-          chatgpt_response=$(echo '${{ toJson(github.event) }}' | jq -r '.discussion.body')
-
-          # Format the response and store it in a markdown file
-          echo "## ChatGPT Response" > chat_response.md
-          echo "" >> chat_response.md
-          echo "Here is the response from ChatGPT:" >> chat_response.md
-          echo "" >> chat_response.md
-          echo "```\n$chatgpt_response\n```" >> chat_response.md
-
-      - name: Debugging
-        run: |
-          echo "category-id: ${{ secrets.CATEGORY_ID }}"
-          echo "repository-id: ${{ secrets.REPOSITORY_ID }}"
-
+          echo "body=$(echo '${{ toJson(github.event) }}' | jq '.discussion.body')" >> $GITHUB_OUTPUT
+          echo "title=$(echo '${{ toJson(github.event) }}' | jq '.discussion.title')" >> $GITHUB_OUTPUT
       - name: Use local action
         id: chatgpt
         uses: ./actions/discussion-workflow
@@ -49,8 +36,7 @@ jobs:
           body: ${{ steps.chatgpt.outputs.body }}
           repository-id: "R_kgDOKFks3w"
           category-id: DIC_kwDOKFks384CYgtw
-
       - name: Print discussion url and id
         run: |
-          echo discussion-id: ${{ steps.create-discussion.outputs.discussion-id }} 
-          echo discussion-url: ${{ steps.create-discussion.outputs.discussion-url }}
+          echo discussion-id: ${{steps.create-discussion.outputs.discussion-id}} 
+          echo discussion-url: ${{steps.create-discussion.outputs.discussion-url}}
