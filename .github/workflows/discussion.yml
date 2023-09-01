@@ -30,10 +30,11 @@ jobs:
       - name: Format ChatGPT Response as Markdown
         id: format-response
         run: |
-          # Modify this section to format the ChatGPT response as Markdown
           chatgpt_response="${{ steps.chatgpt.outputs.body }}"
-          # Perform any necessary formatting here
+          
+          # Modify this section to format the ChatGPT response as Markdown
           formatted_response="**ChatGPT Response:**\n\n${chatgpt_response}"
+          
           echo "::set-output name=formatted_response::$formatted_response"
 
       - name: Create a new GitHub Discussion
