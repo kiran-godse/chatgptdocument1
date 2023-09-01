@@ -14,28 +14,38 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Extract discussion details
-        id: extract-discussion-details
+      - name: workflow steps
+        id: prompt
         run: |
-          echo "body=$(echo '${{ toJson(github.event) }}' | jq -r '.discussion.body')" >> $GITHUB_ENV
-          echo "title=$(echo '${{ toJson(github.event) }}' | jq -r '.discussion.title')" >> $GITHUB_ENV
+          # Fetch the ChatGPT response and store it in a variable
+          chatgpt_response=$(echo '${{ toJson(github.event) }}' | jq -r '.discussion.body')
 
-      - name: Debug ChatGPT Response (Before Formatting)
-        run: |
-          echo "ChatGPT Response (Before Formatting):"
-          echo "${{ steps.chatgpt.outputs.body }}"
+          # Format the response and store it in a markdown file
+          echo "## ChatGPT Response" > response.md
+          echo "" >> chat_response.md
+          echo "Here is the response from ChatGPT:" >> chat_response.md
+          echo "" >> chat_response.md
+          echo "```\n$chatgpt_response\n```" >> chat_response.md
 
-      - name: Use Custom Action to Format and Post ChatGPT Response
-        id: format-and-post
-        uses: kiran-godse/formattingchatgptresponse@main
+      - name: Use local action
+        id: chatgpt
+        uses: ./actions/discussion-workflow
         with:
-          response: ${{ steps.chatgpt.outputs.body }}
-          repository-id: R_kgDOKFks3w
-          category-id: DIC_kwDOKFks384CYgtw
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          api_key: ${{ secrets.API_KEY }}
+          prompt: ${{ steps.prompt.outputs.body }}
 
-      - name: Debug ChatGPT Response (After Formatting)
+      - name: Create a new GitHub Discussion
+        id: create-discussion
+        uses: abirismyname/create-discussion@v1.1.0
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          title: ${{ steps.prompt.outputs.title }}
+          body: ${{ steps.chatgpt.outputs.body }}
+          repository-id: "R_kgDOKFks3w"
+          category-id: DIC_kwDOKFks384CYgtw
+
+      - name: Print discussion url and id
         run: |
-          echo "ChatGPT Response (After Formatting):"
-          echo "${{ steps.format-and-post.outputs.discussion-url }}"
+          echo discussion-id: ${{ steps.create-discussion.outputs.discussion-id }} 
+          echo discussion-url: ${{ steps.create-discussion.outputs.discussion-url }}
