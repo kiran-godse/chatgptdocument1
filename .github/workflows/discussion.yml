@@ -20,14 +20,10 @@ jobs:
           echo "body=$(echo '${{ toJson(github.event) }}' | jq -r '.discussion.body')" >> $GITHUB_ENV
           echo "title=$(echo '${{ toJson(github.event) }}' | jq -r '.discussion.title')" >> $GITHUB_ENV
 
-      - name: Debug Action Inputs
+      - name: Debug ChatGPT Response (Before Formatting)
         run: |
-          echo "Body: ${{ env.body }}"
-          echo "Repository ID: ${{ env.repository-id }}"
-          echo "Category ID: ${{ env.category-id }}"
-          echo "GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}"
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          echo "ChatGPT Response (Before Formatting):"
+          echo "${{ steps.chatgpt.outputs.body }}"
 
       - name: Use local action to interact with ChatGPT API
         id: chatgpt
@@ -45,6 +41,11 @@ jobs:
           formatted_response="**ChatGPT Response:**\n\n${chatgpt_response}"
           
           echo "::set-output name=formatted_response::$formatted_response"
+
+      - name: Debug ChatGPT Response (After Formatting)
+        run: |
+          echo "ChatGPT Response (After Formatting):"
+          echo "${{ steps.format-response.outputs.formatted_response }}"
 
       - name: Create a new GitHub Discussion
         id: create-discussion
