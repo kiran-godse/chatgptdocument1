@@ -25,40 +25,15 @@ jobs:
           echo "ChatGPT Response (Before Formatting):"
           echo "${{ steps.chatgpt.outputs.body }}"
 
-      - name: Use local action to interact with ChatGPT API
-        id: chatgpt
-        uses: ./actions/discussion-workflow
+      - name: Use Custom Action to Format and Post ChatGPT Response
+        id: format-and-post
+        uses: kiran-godse/formattingchatgptresponse@v1
         with:
-          api_key: ${{ secrets.API_KEY }}
-          prompt: ${{ env.body }}
-
-      - name: Format ChatGPT Response as Markdown
-        id: format-response
-        run: |
-          chatgpt_response="${{ steps.chatgpt.outputs.body }}"
-          
-          # Modify this section to format the ChatGPT response as Markdown
-          formatted_response="**ChatGPT Response:**\n\n${chatgpt_response}"
-          
-          echo "::set-output name=formatted_response::$formatted_response"
+          response: ${{ steps.chatgpt.outputs.body }}
+          repository-id: R_kgDOKFks3w
+          category-id: DIC_kwDOKFks384CYgtw
 
       - name: Debug ChatGPT Response (After Formatting)
         run: |
           echo "ChatGPT Response (After Formatting):"
-          echo "${{ steps.format-response.outputs.formatted_response }}"
-
-      - name: Create a new GitHub Discussion
-        id: create-discussion
-        uses: abirismyname/create-discussion@v1.1.0
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          title: ${{ steps.extract-discussion-details.outputs.title }}
-          body: ${{ steps.format-response.outputs.formatted_response }}
-          repository-id: "R_kgDOKFks3w"
-          category-id: DIC_kwDOKFks384CYgtw
-
-      - name: Print discussion url and id
-        run: |
-          echo discussion-id: ${{steps.create-discussion.outputs.discussion-id}} 
-          echo discussion-url: ${{steps.create-discussion.outputs.discussion-url}}
+          echo "${{ steps.format-and-post.outputs.discussion-url }}"
