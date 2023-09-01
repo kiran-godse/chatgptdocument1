@@ -21,11 +21,16 @@ jobs:
           chatgpt_response=$(echo '${{ toJson(github.event) }}' | jq -r '.discussion.body')
 
           # Format the response and store it in a markdown file
-          echo "## ChatGPT Response" > response.md
-          echo "" >> response.md
-          echo "Here is the response from ChatGPT:" >> response.md
-          echo "" >> response.md
-          echo "```\n$chatgpt_response\n```" >> response.md
+          echo "## ChatGPT Response" > chat_response.md
+          echo "" >> chat_response.md
+          echo "Here is the response from ChatGPT:" >> chat_response.md
+          echo "" >> chat_response.md
+          echo "```\n$chatgpt_response\n```" >> chat_response.md
+
+      - name: Debugging
+        run: |
+          echo "category-id: ${{ secrets.CATEGORY_ID }}"
+          echo "repository-id: ${{ secrets.REPOSITORY_ID }}"
 
       - name: Use local action
         id: chatgpt
