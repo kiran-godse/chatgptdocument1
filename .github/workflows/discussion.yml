@@ -20,6 +20,15 @@ jobs:
           echo "body=$(echo '${{ toJson(github.event) }}' | jq -r '.discussion.body')" >> $GITHUB_ENV
           echo "title=$(echo '${{ toJson(github.event) }}' | jq -r '.discussion.title')" >> $GITHUB_ENV
 
+      - name: Debug Action Inputs
+        run: |
+          echo "Body: ${{ env.body }}"
+          echo "Repository ID: ${{ env.repository-id }}"
+          echo "Category ID: ${{ env.category-id }}"
+          echo "GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Use local action to interact with ChatGPT API
         id: chatgpt
         uses: ./actions/discussion-workflow
