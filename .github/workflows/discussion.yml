@@ -14,17 +14,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: workflow steps
-        id: prompt
+      - name: Extract discussion details
+        id: extract-discussion-details
         run: |
-          echo "body=$(echo '${{ toJson(github.event) }}' | jq '.discussion.body')" >> $GITHUB_OUTPUT
-          echo "title=$(echo '${{ toJson(github.event) }}' | jq '.discussion.title')" >> $GITHUB_OUTPUT
-      - name: Use local action
+          echo "body=$(echo '${{ toJson(github.event) }}' | jq -r '.discussion.body')" >> $GITHUB_ENV
+          echo "title=$(echo '${{ toJson(github.event) }}' | jq -r '.discussion.title')" >> $GITHUB_ENV
+
+      - name: Use local action to interact with ChatGPT API
         id: chatgpt
         uses: ./actions/discussion-workflow
         with:
           api_key: ${{ secrets.API_KEY }}
-          prompt: ${{ steps.prompt.outputs.body }}
+          prompt: ${{ env.body }}
+
+      - name: Format ChatGPT Response as Markdown
+        id: format-response
+        run: |
+          # Modify this section to format the ChatGPT response as Markdown
+          chatgpt_response="${{ steps.chatgpt.outputs.body }}"
+          # Perform any necessary formatting here
+          formatted_response="**ChatGPT Response:**\n\n${chatgpt_response}"
+          echo "::set-output name=formatted_response::$formatted_response"
 
       - name: Create a new GitHub Discussion
         id: create-discussion
@@ -32,10 +42,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          title: ${{ steps.prompt.outputs.title }}
-          body: ${{ steps.chatgpt.outputs.body }}
+          title: ${{ steps.extract-discussion-details.outputs.title }}
+          body: ${{ steps.format-response.outputs.formatted_response }}
           repository-id: "R_kgDOKFks3w"
           category-id: DIC_kwDOKFks384CYgtw
+
       - name: Print discussion url and id
         run: |
           echo discussion-id: ${{steps.create-discussion.outputs.discussion-id}} 
