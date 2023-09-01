@@ -27,7 +27,7 @@ jobs:
 
       - name: Use Custom Action to Format and Post ChatGPT Response
         id: format-and-post
-        uses: kiran-godse/formattingchatgptresponse@v1
+        uses: kiran-godse/formattingchatgptresponse@main
         with:
           response: ${{ steps.chatgpt.outputs.body }}
           repository-id: R_kgDOKFks3w
